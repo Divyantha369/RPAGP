@@ -42,3 +42,6 @@ The MCMC sampling procedure iterates through:
 5. Sampling AR process parameters for the noise model
 
 All sampling steps utilize the caching and parallelization infrastructure for maximum efficiency.
+
+![plot](https://github.com/user-attachments/assets/c1cbd19b-b871-4419-b76f-7e64949f2a6b)
+
