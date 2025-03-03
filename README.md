@@ -17,6 +17,28 @@ The implementation utilizes three specialized caching structures to avoid redund
 
 Each cache uses custom key structures based on relevant parameters (dimensions, hyperparameters) with efficient lookup mechanisms.
 
-```cpp
-// Example of cached kernel computation
-arma::mat cached_sq_exp_kernel_cpp(const arma::vec& x, double rho, double alpha, double nugget)
+#### Parallelization Strategy
+The implementation employs OpenMP for multi-threaded execution:
+
+- **Likelihood Computation**: Distributes trial-specific calculations across available cores
+- **Parameter Sampling**: Parallelizes sampling of beta parameters and latent functions
+- **Matrix Operations**: Concurrent generation of predicted values and synthetic data
+- **Adaptive Threading**: Automatically determines optimal thread count based on system resources
+
+#### Computational Efficiency
+Additional optimizations include:
+
+- **Matrix Reuse**: Pre-computes matrices that remain constant across iterations
+- **Numerical Stability**: Employs Cholesky decomposition with fallbacks for matrix operations
+- **Memory Management**: Strategic cache clearing to prevent memory bloat during long MCMC runs
+
+### MCMC Algorithm
+The MCMC sampling procedure iterates through:
+
+1. Sampling the latent function with appropriate pinning constraints
+2. Sampling trial-specific amplitudes (beta)
+3. Sampling latency parameters (tau) via Metropolis-Hastings
+4. Sampling the length scale parameter (rho) via Metropolis-Hastings
+5. Sampling AR process parameters for the noise model
+
+All sampling steps utilize the caching and parallelization infrastructure for maximum efficiency.
