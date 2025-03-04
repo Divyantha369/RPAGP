@@ -22,7 +22,7 @@ The implementation employs OpenMP for multi-threaded execution:
 
 - **Likelihood Computation**: Distributes trial-specific calculations across available cores
 - **Parameter Sampling**: Parallelizes sampling of beta parameters and latent functions
-- **Matrix Operations**: Concurrent generation of predicted values and synthetic data
+- **Matrix Operations**: Concurrent generation of predicted values 
 - **Adaptive Threading**: Automatically determines optimal thread count based on system resources
 
 #### Computational Efficiency
