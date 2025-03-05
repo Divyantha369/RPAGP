@@ -35,7 +35,7 @@ Additional optimizations include:
 ### MCMC Algorithm
 The MCMC sampling procedure iterates through:
 
-1. Sampling the latent function with appropriate pinning constraints
+1. Sampling the latent function 
 2. Sampling trial-specific amplitudes (beta)
 3. Sampling latency parameters (tau) via Metropolis-Hastings
 4. Sampling the length scale parameter (rho) via Metropolis-Hastings
