@@ -8,14 +8,6 @@ This repository contains a  C++ implementation of the Random Phase-Amplitude Gau
 
 ### Performance Optimization
 
-#### Caching System
-The implementation utilizes three specialized caching structures to avoid redundant matrix computations:
-
-- **Kernel Matrix Cache**: Stores square exponential kernel matrices with a configurable maximum size of 30 entries
-- **K_i Matrix Cache**: Stores trial-specific covariance matrices with a larger capacity (200 entries)
-- **Sigma_nu Cache**: Stores AR process covariance matrices
-
-Each cache uses custom key structures based on relevant parameters (dimensions, hyperparameters) with  lookup mechanisms.
 
 #### Parallelization Strategy
 The implementation employs OpenMP for multi-threaded execution:
@@ -25,12 +17,11 @@ The implementation employs OpenMP for multi-threaded execution:
 - **Matrix Operations**: Concurrent generation of predicted values 
 - **Adaptive Threading**: Automatically determines optimal thread count based on system resources
 
-#### Computational Efficiency
-Additional optimizations include:
+#### Use of Armadillo for efficent Operations
 
-- **Matrix Reuse**: Pre-computes matrices that remain constant across iterations
-- **Numerical Stability**: Employs Cholesky decomposition with fallbacks for matrix operations
-- **Memory Management**: cache clearing to prevent memory bloat during long MCMC runs
+Armadillo underpins the RPAGP code’s linear algebra, providing a clean, high-level interface to BLAS/LAPACK functionality. By handling matrix and vector operations through Armadillo’s expression templates, we minimize overhead and memory copies. This is further boosted by OpenMP parallelization, which distributes computations across multiple cores. Overall, Armadillo greatly simplifies the implementation while delivering efficient performance for the code’s frequent matrix computations.
+
+
 
 ### MCMC Algorithm
 The MCMC sampling procedure iterates through:
