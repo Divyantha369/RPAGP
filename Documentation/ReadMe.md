@@ -1,1 +1,0 @@
-This folder contains annotated code blocks extracted from the main C++ script. These blocks are organized according to the nature of their functions, making it easier to view them separately. The complete implementation with the correct code flow can be found in the rpagp.cpp file within the rpagp folder.
