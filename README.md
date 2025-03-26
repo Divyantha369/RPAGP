@@ -33,5 +33,6 @@ The MCMC sampling procedure iterates through:
 5. Sampling AR process parameters for the noise model
 
 
-![plot](https://github.com/user-attachments/assets/c1cbd19b-b871-4419-b76f-7e64949f2a6b)
+![image](https://github.com/user-attachments/assets/bdec8d0d-d8f7-41ad-bbbd-5abdda67adef)
+
 
