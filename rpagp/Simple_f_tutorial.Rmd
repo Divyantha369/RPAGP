@@ -1,0 +1,117 @@
+---
+title: "simple_f"
+author: "Divyantha Praneed"
+date: ""
+output: pdf_document
+---
+
+```{r}
+
+my_dir <- "C:\\Users\\divya\\OneDrive\\Desktop\\Research\\Neural\\GP\\practice2\\rpagp\\C+++"
+setwd(my_dir)
+Sys.setenv("PKG_CXXFLAGS"="-Wno-ignored-attributes")
+Rcpp::sourceCpp("rpagp_rcpp.cpp")
+source("utilities.R")
+```
+
+```{r}
+set.seed(1008)
+
+n <- 30
+n_time <- 50
+
+# Set parameters
+theta <- list(rho = 10,
+              beta = rep(c(1), n ),
+              tau = rep(0,n),
+              phi = c(0.5, 0.1),
+              sigma = 0.25)
+
+# Generate data
+dat <- generate_data(n, n_time, theta)
+dat_trials <- reshape2::melt(dat$y, varnames = c("time", "trial"))
+
+# Plot the raw data
+ggplot(dat_trials) + 
+  geom_line(aes(x = time, y = value, group = factor(trial)), alpha = 0.25) + 
+  geom_line(data = data.frame(time = 1:n_time, f = dat$f), 
+            aes(x = time, y = f), linetype = 1, size = 1, col = "darkgreen") + 
+  labs(y = "", x = "Time") + 
+  theme_bw() + 
+  theme(panel.grid = element_blank())
+
+
+
+
+```
+
+```{r}
+hyperparam_noBT <- list(
+  tau_prior_sd    = 1e-8,   
+  tau_proposal_sd = 0,     # no metropolis updates for tau
+  rho_prior_shape = 12,
+  rho_prior_scale = 1,
+  rho_proposal_sd = 1,
+  beta_prior_mu   = 1,
+  beta_prior_sd   = 1e-8   # beta pinned near 1
+)
+
+# Initial values
+theta0_noBT <- list(
+  rho   = 15,
+  beta  = rep(1, n),  
+  tau   = rep(0, n),  
+  phi   = c(0.5, 0.1),
+  sigma = 0.5
+)
+
+
+pinned_point <- floor(n_time / 2)
+pinned_value <- rowMeans(dat$y)[pinned_point]
+
+n_iter <- 1000
+results<- fit_rpagp_cpp(
+  dat$y,
+  n_iter,
+  theta0_noBT,
+  hyperparam_noBT,
+  pinned_point,
+  pinned_value
+)
+```
+
+
+
+### Display results
+```{r plot_results, include=TRUE,echo=TRUE, eval = TRUE,  cache=TRUE}
+burn_in = (0.6*n_iter)
+out_sim <- getSummaryOutput(results, dat_trials, dat$y, burn_in)
+ggplot(dat_trials) + 
+  geom_line(aes(x = time, y = value, group = factor(trial)), alpha = 0.25) + 
+  # estimated f
+  geom_line(data =  out_sim %>% dplyr::group_by(time) %>%
+              dplyr::summarize(med = median(med)), 
+            aes(x = time, y = med), linewidth = 1, size= 1, col = "chartreuse3") + 
+  # truth
+  geom_line(data =data.frame(time = 1:n_time, f = dat$f), 
+            aes(x = time, y = f), linetype = 2, size = 1, col = "darkgreen") + 
+  # empirical mean
+  geom_line(data = dat_trials %>% dplyr::group_by(time)
+            %>% dplyr::summarize(mean = mean(value)), 
+            aes(x = time, y = mean), linewidth = 1, linetype = "dotted", col = "black") + 
+  labs(y = "", x = "Time") + 
+  scale_color_manual("Legend Title", limits=c("Weekly Forecast", "Main Forecast", "ciao"), values = c("red","red", "red")) +
+  guides(colour = guide_legend(override.aes = list(pch = c(16, 21, 16), fill = c("red", "white", "red")))) +
+  theme_bw() + 
+  theme(panel.grid = element_blank(), 
+        axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        axis.text.x = element_blank(), 
+        axis.ticks.x = element_blank())
+```
+
+
+
+
+
+
