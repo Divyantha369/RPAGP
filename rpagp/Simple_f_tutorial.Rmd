@@ -15,7 +15,7 @@ source("utilities.R")
 ```
 
 ```{r}
-set.seed(1008)
+set.seed(1002)
 
 n <- 30
 n_time <- 50
@@ -69,7 +69,7 @@ theta0_noBT <- list(
 pinned_point <- floor(n_time / 2)
 pinned_value <- rowMeans(dat$y)[pinned_point]
 
-n_iter <- 1000
+n_iter <- 2000
 results<- fit_rpagp_cpp(
   dat$y,
   n_iter,
